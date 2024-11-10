@@ -1,0 +1,190 @@
+import java.awt.*;
+import java.util.ArrayList;
+import javax.swing.*;
+
+class Student {
+    private String studentName;
+    private String fatherName;
+    private String motherName;
+    private String mobileNo;
+    private String dateOfBirth;
+    private String branch;
+
+    public Student(String studentName, String fatherName, String motherName, String mobileNo, String dateOfBirth, String branch) {
+        this.studentName = studentName;
+        this.fatherName = fatherName;
+        this.motherName = motherName;
+        this.mobileNo = mobileNo;
+        this.dateOfBirth = dateOfBirth;
+        this.branch = branch;
+    }
+
+    public String getStudentName() { return studentName; }
+    public String getFatherName() { return fatherName; }
+    public String getMotherName() { return motherName; }
+    public String getMobileNo() { return mobileNo; }
+    public String getDateOfBirth() { return dateOfBirth; }
+    public String getBranch() { return branch; }
+
+    public void setStudentName(String studentName) { this.studentName = studentName; }
+    public void setFatherName(String fatherName) { this.fatherName = fatherName; }
+    public void setMotherName(String motherName) { this.motherName = motherName; }
+    public void setMobileNo(String mobileNo) { this.mobileNo = mobileNo; }
+    public void setDateOfBirth(String dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+    public void setBranch(String branch) { this.branch = branch; }
+
+    @Override
+    public String toString() {
+        return "Name: " + studentName + ", Father's Name: " + fatherName + ", Mother's Name: " + motherName +
+                ", Mobile No: " + mobileNo + ", DOB: " + dateOfBirth + ", Branch: " + branch;
+    }
+}
+
+public class StudentPortal extends JFrame {
+    private ArrayList<Student> students = new ArrayList<>();
+    private JTextArea displayArea;
+    private JTextField nameField, fatherField, motherField, mobileField, dobField, branchField;
+
+    public StudentPortal() {
+        setTitle("Student Portal System");
+        setSize(400, 500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new FlowLayout());
+
+        // Input fields
+        nameField = new JTextField(20);
+        fatherField = new JTextField(20);
+        motherField = new JTextField(20);
+        mobileField = new JTextField(20);
+        dobField = new JTextField(20);
+        branchField = new JTextField(20);
+
+        add(new JLabel("Student Name:"));
+        add(nameField);
+        add(new JLabel("Father's Name:"));
+        add(fatherField);
+        add(new JLabel("Mother's Name:"));
+        add(motherField);
+        add(new JLabel("Mobile No:"));
+        add(mobileField);
+        add(new JLabel("Date of Birth:"));
+        add(dobField);
+        add(new JLabel("Branch:"));
+        add(branchField);
+
+        // Buttons
+        JButton addButton = new JButton("Add");
+        JButton updateButton = new JButton("Update");
+        JButton deleteButton = new JButton("Delete");
+        JButton searchButton = new JButton("Search");
+        JButton displayButton = new JButton("Display All");
+
+        add(addButton);
+        add(updateButton);
+        add(deleteButton);
+        add(searchButton);
+        add(displayButton);
+
+        // Display area
+        displayArea = new JTextArea(10, 30);
+        displayArea.setEditable(false);
+        add(new JScrollPane(displayArea));
+
+        // Button actions
+        addButton.addActionListener(e -> addStudent());
+        updateButton.addActionListener(e -> updateStudent());
+        deleteButton.addActionListener(e -> deleteStudent());
+        searchButton.addActionListener(e -> searchStudent());
+        displayButton.addActionListener(e -> displayAllStudents());
+    }
+
+    private void addStudent() {
+        String name = nameField.getText();
+        String father = fatherField.getText();
+        String mother = motherField.getText();
+        String mobile = mobileField.getText();
+        String dob = dobField.getText();
+        String branch = branchField.getText();
+
+        Student student = new Student(name, father, mother, mobile, dob, branch);
+        students.add(student);
+        displayArea.setText("Student added successfully.");
+        clearFields();
+    }
+
+    private void updateStudent() {
+        String name = nameField.getText();
+        Student student = findStudentByName(name);
+        if (student != null) {
+            student.setStudentName(nameField.getText());
+            student.setFatherName(fatherField.getText());
+            student.setMotherName(motherField.getText());
+            student.setMobileNo(mobileField.getText());
+            student.setDateOfBirth(dobField.getText());
+            student.setBranch(branchField.getText());
+            displayArea.setText("Student updated successfully.");
+        } else {
+            displayArea.setText("Student not found.");
+        }
+        clearFields();
+    }
+
+    private void deleteStudent() {
+        String name = nameField.getText();
+        Student student = findStudentByName(name);
+        if (student != null) {
+            students.remove(student);
+            displayArea.setText("Student deleted successfully.");
+        } else {
+            displayArea.setText("Student not found.");
+        }
+        clearFields();
+    }
+
+    private void searchStudent() {
+        String name = nameField.getText();
+        Student student = findStudentByName(name);
+        if (student != null) {
+            displayArea.setText(student.toString());
+        } else {
+            displayArea.setText("Student not found.");
+        }
+        clearFields();
+    }
+
+    private void displayAllStudents() {
+        if (students.isEmpty()) {
+            displayArea.setText("No students found.");
+        } else {
+            StringBuilder studentList = new StringBuilder();
+            for (Student student : students) {
+                studentList.append(student).append("\n");
+            }
+            displayArea.setText(studentList.toString());
+        }
+    }
+
+    private Student findStudentByName(String name) {
+        for (Student student : students) {
+            if (student.getStudentName().equalsIgnoreCase(name)) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    private void clearFields() {
+        nameField.setText("");
+        fatherField.setText("");
+        motherField.setText("");
+        mobileField.setText("");
+        dobField.setText("");
+        branchField.setText("");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new StudentPortal().setVisible(true);
+        });
+    }
+}
